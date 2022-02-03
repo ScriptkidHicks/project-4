@@ -36,6 +36,11 @@ def page_not_found(error):
     return flask.render_template('404.html'), 404
 
 
+@app.route("/_get_now")
+def _calc_now():
+    print("We in this thing")
+    return flask.jsonify(result={"now": arrow.now().format('YYYY-MM-DDTHH:mm')})
+
 ###############
 #
 # AJAX request handlers
@@ -51,15 +56,14 @@ def _calc_times():
     """
     app.logger.debug("Got a JSON request")
     km = request.args.get('km', 999, type=float)
+    begin = request.args.get("beginning", "now", type=str)
+    distance = request.args.get("distance", 999, type=float)
+    print("The beginning: ", begin)
+    print("The distance: ", distance)
     app.logger.debug("km={}".format(km))
     app.logger.debug("request.args: {}".format(request.args))
-    # FIXME!
-    # Right now, only the current time is passed as the start time
-    # and control distance is fixed to 200
-    # You should get these from the webpage!
-    print(km)
-    open_time = acp_times.open_time(km, 200, arrow.now().isoformat).format('YYYY-MM-DDTHH:mm')
-    close_time = acp_times.close_time(km, 200, arrow.now().isoformat).format('YYYY-MM-DDTHH:mm')
+    open_time = acp_times.open_time(km, distance, arrow.get(begin)).format('YYYY-MM-DDTHH:mm')
+    close_time = acp_times.close_time(km, distance, arrow.get(begin)).format('YYYY-MM-DDTHH:mm')
     result = {"open": open_time, "close": close_time}
     return flask.jsonify(result=result)
 

@@ -13,8 +13,9 @@ import arrow
 #  same arguments.
 #
 
+speedDict = { "0-200": (15, 34), "200-400": (15, 32), "400-600": (15, 30), "600-1000": (11.428, 28), "1000-1300": (13.333, 26)}
 
-def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
+def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
     """
     Args:
        control_dist_km:  number, control distance in kilometers
@@ -26,7 +27,27 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
        An arrow object indicating the control open time.
        This will be in the same time zone as the brevet start time.
     """
-    return arrow.now()
+    if (control_dist_km <= 200):
+        speed = speedDict["0-200"][1]
+    elif control_dist_km <= 400:
+        speed = speedDict["200-400"][1]
+    elif control_dist_km <= 600:
+        speed = speedDict["400-600"][1]
+    elif control_dist_km <= 1000:
+        speed = speedDict["600-1000"][1]
+    elif control_dist_km <= 1300:
+        speed = speedDict["1000-1300"][1]
+    else:
+        # in the case that they somehow manage to pass in an illegal distance
+        # default to the longest distance maximum speed
+        speed = 26
+    if control_dist_km > brevet_dist_km:
+        # in the instance that the total brevet distance is greater than the
+        # distance of the current control, we calculate by the total distance
+        hours = brevet_dist_km / speed
+    else:
+        hours = control_dist_km / speed
+    return brevet_start_time.shift(hours=+hours)
 
 
 def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
@@ -41,4 +62,24 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
        An arrow object indicating the control close time.
        This will be in the same time zone as the brevet start time.
     """
-    return arrow.now()
+    if (control_dist_km <= 200):
+        speed = speedDict["0-200"][0]
+    elif control_dist_km <= 400:
+        speed = speedDict["200-400"][0]
+    elif control_dist_km <= 600:
+        speed = speedDict["400-600"][0]
+    elif control_dist_km <= 1000:
+        speed = speedDict["600-1000"][0]
+    elif control_dist_km <= 1300:
+        speed = speedDict["1000-1300"][0]
+    else:
+        # in the case that they somehow manage to pass in an illegal distance
+        # default to the longest distance maximum speed
+        speed = 26
+    if control_dist_km > brevet_dist_km:
+        # in the instance that the total brevet distance is greater than the
+        # distance of the current control, we calculate by the total distance
+        hours = brevet_dist_km / speed
+    else:
+        hours = control_dist_km / speed
+    return brevet_start_time.shift(hours=+hours)

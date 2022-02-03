@@ -114,6 +114,20 @@
          <script type="text/javascript">
             var SCRIPT_ROOT = {{ request.script_root|tojson|safe }} ;
             var TIME_CALC_URL = SCRIPT_ROOT + "/_calc_times";
+            let prevMax = 0;
+            function get_now(){
+               $.getJSON(SCRIPT_ROOT + "/_get_now", {}).done(
+                  function (data) {
+                     document.getElementById("begin_date").value = data.result.now;
+                  }
+               ).fail(
+                  function(err) {
+                     console.log(err);
+                  }
+               )
+            }
+
+            get_now();
 
             // FIX ME!
             // Right now, only the kilometers are passed
@@ -121,10 +135,12 @@
             // View flask_brevets.py for details.
             function calc_times(control) {
               var km = control.find("input[name='km']").val();
+              let beginning = document.getElementById("begin_date").value;
+              let distance = document.getElementById("brevet_dist_km").value;
               var open_time_field = control.find("input[name='open']");
               var close_time_field = control.find("input[name='close']");
 
-              $.getJSON(TIME_CALC_URL, {km: km}).done(
+              $.getJSON(TIME_CALC_URL, {km: km, beginning: beginning, distance: distance}).done(
                 function(data) {
                    var times = data.result;
                    console.log("Got a response: ");
@@ -159,6 +175,12 @@
                 $('input[name="km"]').change(
                    function() {
                        var km = parseFloat($(this).val());
+                       if (km <= prevMax) {
+                          return;
+                       } else {
+                          prevMax = km;
+                       }
+                       console.log(prevMax)
                        var miles = (0.621371 * km).toFixed(6) ;
                        console.log("Converted " + km + " km to " + miles + " miles");
                        var control_entry = $(this).parents(".control")
