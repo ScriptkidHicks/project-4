@@ -27,6 +27,9 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
        An arrow object indicating the control open time.
        This will be in the same time zone as the brevet start time.
     """
+    if (control_dist_km <= 0):
+        return brevet_start_time
+
     if (control_dist_km <= 200):
         speed = speedDict["0-200"][1]
     elif control_dist_km <= 400:
@@ -62,6 +65,9 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
        An arrow object indicating the control close time.
        This will be in the same time zone as the brevet start time.
     """
+    if (control_dist_km <= 0):
+        return brevet_start_time.shift(hours=+1)
+
     if (control_dist_km <= 200):
         speed = speedDict["0-200"][0]
     elif control_dist_km <= 400:

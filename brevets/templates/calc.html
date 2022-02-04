@@ -158,15 +158,27 @@
             }
 
             $(document).ready(function(){
+
              // Do the following when the page is finished loading
 
                 $('input[name="miles"]').change(
                    function() {
+                       let totaldistance = parseFloat(document.getElementById("brevet_dist_km").value) * 1.2;
                        var miles = parseFloat($(this).val());
+                       if (miles <= 0){
+                          miles = 0;
+                       }
                        var km = (1.609344 * miles).toFixed(6) ;
-                       console.log("Converted " + miles + " miles to " + km + " kilometers");
+                       console.log(totaldistance);
+                       if (km > totaldistance){
+                          console.log("Too long!");
+                          km = totaldistance;
+                          miles = (0.621371 * km).toFixed(6);
+                       }
                        var control_entry = $(this).parents(".control")
                        var target = control_entry.find("input[name='km']");
+                       let milestarget = control_entry.find("input[name='miles']");
+                       milestarget.val(miles);
                        target.val( km );
                        // Then calculate times for this entry
                        calc_times(control_entry);
@@ -174,18 +186,22 @@
 
                 $('input[name="km"]').change(
                    function() {
-                       var km = parseFloat($(this).val());
-                       if (km <= prevMax) {
-                          return;
-                       } else {
-                          prevMax = km;
-                       }
-                       console.log(prevMax)
-                       var miles = (0.621371 * km).toFixed(6) ;
+                      let totaldistance = parseFloat(document.getElementById("brevet_dist_km").value) * 1.2;
+                      var km = parseFloat($(this).val());
+                      if (km <= 0) {
+                         km = 0;
+                      }
+                      var miles = (0.621371 * km).toFixed(6) ;
                        console.log("Converted " + km + " km to " + miles + " miles");
+                       if (km > totaldistance){
+                          km = totaldistance;
+                          miles = (0.621371 * km).toFixed(6);
+                       }
                        var control_entry = $(this).parents(".control")
                        var target = control_entry.find("input[name='miles']");
                        target.val( miles );
+                       let kmtarget = control_entry.find("input[name='km");
+                       kmtarget.val( km );
                        // Then calculate times for this entry
                        calc_times(control_entry);
                     });
