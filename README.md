@@ -12,55 +12,34 @@ This project consists of a web application that is based on RUSA's online calcul
 
 We are essentially replacing the calculator here [https://rusa.org/octime_acp.html](https://rusa.org/octime_acp.html). We can also use that calculator to clarify requirements and develop test data. 
 
-## Tasks
+## Downloading and use
 
-* Implement the logic in `acp_times.py` based on the algorithm linked above.
+To download this product, fork the repo, then clone it to your local machine. To run it, you can either generate a virtual environment using virtualenv, and the requirements file contained in this repo, or you can run it by building and running a docker image. If you are using the venv option, use the following command to start the machine:
 
-* Create test cases using the original website, and write test suites for your project.
-	* Based on what was discussed in the lecture, create test cases, try them in the original website, and check if your functions correctly calculate the times.
-	* This will effectively replicate the calulator above.
+```
+./backstart.sh
+```
 
-* Edit the template and Flask app so that the required remaining arugments are passed along.
-	* Currently the miles to kilometers (and some other basic stuff) is implemented with AJAX. 
-	* The remainder is left to you.
+Otherwise, if you are using the docker approach, you can build the docker image with the following commands:
 
-* As always, revise the README file, and add your info to `Dockerfile`. These have points!
-	* **NOTE:** This time, you should outline the application, the algorithm, and how to use start (docker instructions, web app instructions). **Make sure you're thorough, otherwise you may not get all the points.**
+```
+cd brevets
+docker build .
+docker run {your image id goes here}
+```
 
-* As always, submit your `credentials.ini` through Canvas. It should contain your name and git repo URL.
+once it's running, the machine will provide some logging info about the port you are exposing it on. You should create a credentials.ini copied from the credentials skeleton here provided. If you don't, the container will default to the defualt ini. In the loggin info on first startup, the machine will register the ip adress, and port it is running on. Visit that port to begin interacting with the brevets time calculator.
 
-### Testing
+## using the calculator
 
-A suite of nose test cases is a requirement of this project. Design the test cases based on an interpretation of rules here [https://rusa.org/pages/acp-brevet-control-times-calculator](https://rusa.org/pages/acp-brevet-control-times-calculator). Be sure to test your test cases: You can use the current brevet time calculator [https://rusa.org/octime_acp.html](https://rusa.org/octime_acp.html) to check that your expected test outputs are correct. While checking these values once is a manual operation, re-running your test cases should be automated in the usual manner as a Nose test suite.
+To use the brevets calculator, update the distance of the brevet you would like, set the starting time of the brevet (this will autopopulate with the current time and date) and begin entering control distances. Notable, the site will not let you enter distance that are longer than 120% of the total brevet distance. Additionally, if you attempt to enter a negative number, the page will correct your mistake by setting the distance to 0.
 
-To make automated testing more practical, your open and close time calculations should be in a separate module. Because I want to be able to use my test suite as well as yours, I will require that module be named `acp_times.py` and contain the two functions I have included in the skeleton code (though revised, of course, to return correct results).
+## The logic of the calculator
 
-We should be able to run your test suite by changing to the `brevets` directory and typing `nosetests`. All tests should pass. You should have at least 5 test cases, and more importantly, your test cases should be chosen to distinguish between an implementation that correctly interprets the ACP rules and one that does not.
-
-## Grading Rubric
-
-* If your code works as expected: 100 points. This includes:
-
-	* Completing the frontend in `calc.html`.
-	
-	* Completing the Flask app accordingly (`flask_brevets.py`).
-	
-	* Implementing the logic in `acp_times.py`.
-	
-	* Updating `README` with a clear specification.
-	
-	* Writing at least **five** correct tests using nose (put them in `tests`, follow Project 3 if necessary) and all pass.
-
-* If the algorithm is incorrect, 25 points will be docked off.
-
-* If the webpage does not work as expected (JQuery or Flask failing to correctly fill in the information, etc.), 25 points will be docked off.
-
-* If the test cases are missing/not functional/do not all pass, 5 points will be docked off per each (25 points total).
-
-* If `README` is not clear, missing or not edited, or `Dockerfile` is not updated, up to 15 points will be docked off.
-
-* If none of the functionalities work, 10 points will be given assuming `credentials.ini` is submitted with the correct repo URL, and `Dockerfile` builds and runs without any errors. 
+If the distance is 0, then the opening time will be the opening time of the whole brevet, and the closing time will be an hour therafter. If the control is any other distance, then the total distance of that control will be divided by the relevant maximum and minimum speeds to provide the opening and closing times of that control. Note that while placing a control at 0 distance will result in a closing time an hour after the opening time of the race, any distance under 15km will not offer such a courtesy, and will result in a closing time before the closing time of the start of the race. It is advised that one does not do so, as a result.
 
 ## Authors
 
 Michal Young, Ram Durairajan. Updated by Ali Hassani.
+
+Completed by Tammas Hicks
