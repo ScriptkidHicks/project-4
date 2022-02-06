@@ -30,6 +30,9 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
     if (control_dist_km <= 0):
         return brevet_start_time
 
+    if (control_dist_km > (brevet_dist_km * 1.2)):
+        control_dist_km = brevet_dist_km * 1.2
+
     if (control_dist_km <= 200):
         speed = speedDict["0-200"][1]
     elif control_dist_km <= 400:
@@ -45,9 +48,7 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
         # default to the longest distance maximum speed
         speed = 26
     if control_dist_km > brevet_dist_km:
-        # in the instance that the total brevet distance is greater than the
-        # distance of the current control, we calculate by the total distance
-        hours = brevet_dist_km / speed
+        hours = control_dist_km / speed
     else:
         hours = control_dist_km / speed
     return brevet_start_time.shift(hours=+hours)
@@ -66,7 +67,11 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
        This will be in the same time zone as the brevet start time.
     """
     if (control_dist_km <= 0):
-        return brevet_start_time.shift(hours=+1)
+        return brevet_start_time.shift(hours=+1)    
+
+    if (control_dist_km > (brevet_dist_km * 1.2)):
+        control_dist_km = brevet_dist_km * 1.2
+
 
     if (control_dist_km <= 200):
         speed = speedDict["0-200"][0]
