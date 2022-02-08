@@ -13,7 +13,9 @@ import arrow
 #  same arguments.
 #
 
-speedDict = { "0-200": (15, 34), "200-400": (15, 32), "400-600": (15, 30), "600-1000": (11.428, 28), "1000-1300": (13.333, 26)}
+speedDict = { 0: (15, 34), 1: (15, 32), 2: (15, 30), 3: (11.428, 28), 4: (13.333, 26)}
+
+distanceDict = [200, 100, 100, 200, 400, 200, 200]
 
 maxLookup = { 200: (13, 30), 300: (20, 0), 400: (27, 0), 600: (40, 0), 1000: (75, 0), 1200: (90, 0), 1400: (116, 40)}
 
@@ -35,22 +37,19 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
     if (control_dist_km > brevet_dist_km):
         control_dist_km = brevet_dist_km
 
-    if (control_dist_km <= 200):
-        speed = speedDict["0-200"][1]
-    elif control_dist_km <= 400:
-        speed = speedDict["200-400"][1]
-    elif control_dist_km <= 600:
-        speed = speedDict["400-600"][1]
-    elif control_dist_km <= 1000:
-        speed = speedDict["600-1000"][1]
-    elif control_dist_km <= 1300:
-        speed = speedDict["1000-1300"][1]
-    else:
-        # in the case that they somehow manage to pass in an illegal distance
-        # default to the longest distance maximum speed
-        speed = 26
+    minutes = 0
 
-    minutes = round((control_dist_km / (speed / 60)))
+    for x in range(5):
+        print(distanceDict[x])
+        print(control_dist_km)
+        if control_dist_km >= distanceDict[x]:
+            minutes += round((distanceDict[x] / speedDict[x][1]) * 60)
+            control_dist_km -= distanceDict[x]
+        elif control_dist_km <= 0:
+            break
+        else:
+            minutes += round((control_dist_km / speedDict[x][1]) * 60)
+            break
 
     return brevet_start_time.shift(minutes=+minutes)
 
@@ -72,30 +71,23 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
 
     if (control_dist_km <= 60):
         minutes = round((control_dist_km / (20 / 60)) + 60)
-        print(control_dist_km)
-        print(minutes)
         return brevet_start_time.shift( minutes=+minutes )
 
     if (control_dist_km >= (brevet_dist_km)):
         return brevet_start_time.shift(hours=+maxLookup[brevet_dist_km][0], minutes=+maxLookup[brevet_dist_km][1])
 
+    minutes = 0
 
-    if (control_dist_km <= 200):
-        speed = speedDict["0-200"][0]
-    elif control_dist_km <= 400:
-        speed = speedDict["200-400"][0]
-    elif control_dist_km <= 600:
-        speed = speedDict["400-600"][0]
-    elif control_dist_km <= 1000:
-        speed = speedDict["600-1000"][0]
-    elif control_dist_km <= 1300:
-        speed = speedDict["1000-1300"][0]
-    else:
-        # in the case that they somehow manage to pass in an illegal distance
-        # default to the longest distance maximum speed
-        speed = 13.333
-    minutes = round((control_dist_km / speed) * 60)
-    print("speed ", speed)
-    print("distance ", control_dist_km)
-    print("minutes ", minutes)
+    for x in range(5):
+        print(distanceDict[x])
+        print(control_dist_km)
+        if control_dist_km >= distanceDict[x]:
+            minutes += round((distanceDict[x] / speedDict[x][0]) * 60)
+            control_dist_km -= distanceDict[x]
+        elif control_dist_km <= 0:
+            break
+        else:
+            minutes += round((control_dist_km / speedDict[x][0]) * 60)
+            break
+
     return brevet_start_time.shift(minutes=+minutes)
