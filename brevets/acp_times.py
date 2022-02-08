@@ -30,8 +30,8 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
     if (control_dist_km <= 0):
         return brevet_start_time
 
-    if (control_dist_km > (brevet_dist_km * 1.2)):
-        control_dist_km = brevet_dist_km * 1.2
+    if (control_dist_km > (brevet_dist_km)):
+        control_dist_km = brevet_dist_km
 
     if (control_dist_km <= 200):
         speed = speedDict["0-200"][1]
@@ -67,8 +67,12 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
     if (control_dist_km <= 0):
         return brevet_start_time.shift(hours=+1)    
 
-    if (control_dist_km > (brevet_dist_km * 1.2)):
-        control_dist_km = brevet_dist_km * 1.2
+    if (control_dist_km <= 60):
+        minutes = 60 + round((control_dist_km * 60) / 20)
+        return brevet_start_time.shift(minutes=+minutes)
+
+    if (control_dist_km > (brevet_dist_km)):
+        control_dist_km = brevet_dist_km
 
 
     if (control_dist_km <= 200):
