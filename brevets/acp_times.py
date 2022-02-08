@@ -49,8 +49,6 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
             minutes += (control_dist_km / speedDict[x][1]) * 60
             break
 
-    if (minutes > 0):
-        minutes += (control_dist_km / 26) * 60
 
     minutes = round(minutes)
     return brevet_start_time.shift(minutes=+minutes)
@@ -89,9 +87,6 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
         else:
             minutes += (control_dist_km / speedDict[x][0]) * 60
             break
-
-    if (minutes > 0):
-        minutes += (control_dist_km / 13.333) * 60
 
     minutes = round(minutes)
     return brevet_start_time.shift(minutes=+minutes)
