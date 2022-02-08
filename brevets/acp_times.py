@@ -15,7 +15,7 @@ import arrow
 
 speedDict = { 0: (15, 34), 1: (15, 32), 2: (15, 30), 3: (11.428, 28), 4: (13.333, 26)}
 
-distanceDict = [200, 100, 100, 200, 400]
+distanceDict = [200, 200, 200, 400]
 
 maxLookup = { 200: (13, 30), 300: (20, 0), 400: (27, 0), 600: (40, 0), 1000: (75, 0), 1200: (90, 0), 1400: (116, 40)}
 
@@ -39,7 +39,7 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
 
     minutes = 0
 
-    for x in range(5):
+    for x in range(4):
         if control_dist_km >= distanceDict[x]:
             minutes += (distanceDict[x] / speedDict[x][1]) * 60
             control_dist_km -= distanceDict[x]
@@ -48,6 +48,9 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
         else:
             minutes += (control_dist_km / speedDict[x][1]) * 60
             break
+
+    if (minutes > 0):
+        minutes += (control_dist_km / 26) * 60
 
     minutes = round(minutes)
     return brevet_start_time.shift(minutes=+minutes)
@@ -77,7 +80,7 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
 
     minutes = 0
 
-    for x in range(5):
+    for x in range(4):
         if control_dist_km >= distanceDict[x]:
             minutes += (distanceDict[x] / speedDict[x][0]) * 60
             control_dist_km -= distanceDict[x]
@@ -86,6 +89,9 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
         else:
             minutes += (control_dist_km / speedDict[x][0]) * 60
             break
+
+    if (minutes > 0):
+        minutes += (control_dist_km / 13.333) * 60
 
     minutes = round(minutes)
     return brevet_start_time.shift(minutes=+minutes)
