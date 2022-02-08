@@ -15,6 +15,8 @@ import arrow
 
 speedDict = { "0-200": (15, 34), "200-400": (15, 32), "400-600": (15, 30), "600-1000": (11.428, 28), "1000-1300": (13.333, 26)}
 
+maxLookup = { 200: (13, 30), 300: (20, 0), 400: (27, 0), 600: (40, 0), 1000: (75, 0), 1200: (90, 0), 1400: (116, 40)}
+
 def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
     """
     Args:
@@ -30,8 +32,8 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
     if (control_dist_km <= 0):
         return brevet_start_time
 
-    if (control_dist_km > (brevet_dist_km)):
-        control_dist_km = brevet_dist_km
+    if (control_dist_km > (brevet_dist_km * 1.2)):
+        control_dist_km = brevet_dist_km * 1.2
 
     if (control_dist_km <= 200):
         speed = speedDict["0-200"][1]
@@ -71,8 +73,8 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
         minutes = 60 + round((control_dist_km * 60) / 20)
         return brevet_start_time.shift(minutes=+minutes)
 
-    if (control_dist_km > (brevet_dist_km)):
-        control_dist_km = brevet_dist_km
+    if (control_dist_km >= (brevet_dist_km)):
+        return brevet_start_time.shift(hours=+maxLookup[brevet_dist_km][0], minutes=+maxLookup[brevet_dist_km][1])
 
 
     if (control_dist_km <= 200):
