@@ -38,7 +38,6 @@ def page_not_found(error):
 
 @app.route("/_get_now")
 def _calc_now():
-    print("We in this thing")
     return flask.jsonify(result={"now": arrow.now().format('YYYY-MM-DDTHH:mm')})
 
 ###############
@@ -58,12 +57,9 @@ def _calc_times():
     km = request.args.get('km', 999, type=float)
     begin = request.args.get("beginning", "now", type=str)
     distance = request.args.get("distance", 999, type=float)
-    print("The beginning: ", begin)
-    print("The distance: ", distance)
     app.logger.debug("km={}".format(km))
     app.logger.debug("request.args: {}".format(request.args))
     open_time = acp_times.open_time(km, distance, arrow.get(begin)).format('YYYY-MM-DDTHH:mm')
-    print(open_time)
     close_time = acp_times.close_time(km, distance, arrow.get(begin)).format('YYYY-MM-DDTHH:mm')
     result = {"open": open_time, "close": close_time}
     return flask.jsonify(result=result)
