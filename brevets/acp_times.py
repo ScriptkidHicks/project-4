@@ -51,7 +51,7 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
         speed = 26
 
     hours = control_dist_km / speed
-    minutes = round(((hours % 1) * 60) + .1)
+    minutes = ((hours % 1) // 0.01) * 60
     hours = hours // 1
 
     return brevet_start_time.shift(hours=+hours, minutes=+minutes)
@@ -74,7 +74,7 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
 
     if (control_dist_km <= 60):
         hours = control_dist_km / 20
-        minutes = round(((hours % 1) * 60))
+        minutes = ((hours % 1) // 0.01) * 60
         hours = hours // 1
         return brevet_start_time.shift(hours=+hours, minutes=+minutes )
 
@@ -97,6 +97,6 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
         # default to the longest distance maximum speed
         speed = 13.333
     hours = control_dist_km / speed
-    minutes = round(((hours % 1) * 60))
+    minutes = ((hours % 1) // 0.01) * 60
     hours = hours // 1
     return brevet_start_time.shift(hours=+hours, minutes=+minutes)
