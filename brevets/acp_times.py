@@ -31,9 +31,9 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
     """
     if (control_dist_km <= 0):
         return brevet_start_time
-
-    if (control_dist_km > (brevet_dist_km * 1.2)):
-        control_dist_km = brevet_dist_km * 1.2
+    
+    if (control_dist_km > brevet_dist_km):
+        control_dist_km = brevet_dist_km
 
     if (control_dist_km <= 200):
         speed = speedDict["0-200"][1]
@@ -50,8 +50,14 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time: arrow):
         # default to the longest distance maximum speed
         speed = 26
 
-    minutes = round((control_dist_km * 60 ) / speed)
-    return brevet_start_time.shift(minutes=+minutes)
+    print(control_dist_km)
+    print(speed)
+    hours = control_dist_km / speed
+    minutes = round(((hours % 1) * 60))
+    hours = hours // 1
+    print("hours ", hours)
+    print("minutes ", minutes)
+    return brevet_start_time.shift(hours=+hours, minutes=+minutes)
 
 
 def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
@@ -70,7 +76,7 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
         return brevet_start_time.shift(hours=+1)    
 
     if (control_dist_km <= 60):
-        minutes = 60 + round((control_dist_km * 60) / 20)
+        minutes = 60 + ((control_dist_km // 20) * 60)
         return brevet_start_time.shift(minutes=+minutes)
 
     if (control_dist_km >= (brevet_dist_km)):
@@ -91,5 +97,7 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
         # in the case that they somehow manage to pass in an illegal distance
         # default to the longest distance maximum speed
         speed = 13.333
-    minutes = round((control_dist_km * 60) / speed)
-    return brevet_start_time.shift(minutes=+minutes)
+    hours = control_dist_km / speed
+    minutes = round(((hours % 1) * 60))
+    hours = hours // 1
+    return brevet_start_time.shift(hours=+hours, minutes=+minutes)
